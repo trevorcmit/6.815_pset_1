@@ -8,8 +8,13 @@ using namespace std;
 int main() {
   // cout << "nothing done in a1_main.cpp, debug me !" << endl;
 
-  Image x = create_special();
-  x.write("./my_image.png");
+
+
+  // Colorspace tests
+  // Image im("./Input/castle_small.png");
+  // Image out = color2gray(im);
+  // out.write("./Output/Color2Gray+1+color2gray.png");
+  // return 0;
 
   // Example
   // Image im("./Input/castle_small.png");

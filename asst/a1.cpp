@@ -34,25 +34,49 @@ Image create_special() {
 // So you will return a new image
 Image brightness(const Image &im, float factor) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Image output(im.width(), im.height(), im.channels());
-  // Modify image brightness
-  // return output;
-  return Image(1, 1, 1); // Change this
+  Image output(im.width(), im.height(), im.channels());
+  for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) { // All possible channels 
+        output(w,h,c) = factor * im(w,h,c) ; // Multiply by Factor
+      }
+    }
+  }
+  return output; // Return new image, not a modified original
 }
 
 Image contrast(const Image &im, float factor, float midpoint) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Image output(im.width(), im.height(), im.channels());
-  // Modify image contrast
-  // return output;
-  return Image(1, 1, 1); // Change this
+  Image output(im.width(), im.height(), im.channels());
+  for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) { // All possible channels
+        output(w,h,c) = factor * (midpoint - im(w,h,c)) + midpoint; // perform given contrast formula
+      }
+    }
+  }
+  return output;
 }
 
 Image color2gray(const Image &im, const std::vector<float> &weights) {
   // --------- HANDOUT  PS01 ------------------------------
   // Image output(im.width(), im.height(), 1);
   // Convert to grayscale
-  return Image(1, 1, 1); // Change this
+  Image output(im.width(), im.height(), 1); // Only one color channel
+  for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      if (im.channels() == 1) { // 1 channel = Solely first weight
+        output(w, h) = weights[0] * im(w, h, 0);
+      }
+      if (im.channels() == 2) { // 2 channels = First two weights
+        output(w, h) = weights[0] * im(w, h, 0) + weights[1] * im(w, h, 1);
+      }
+      if (im.channels() == 3) { // 3 channels = All three weights
+        output(w, h) = weights[0] * im(w, h, 0) + weights[1] * im(w, h, 1) + weights[2] * im(w, h, 2);
+      }
+    }
+  }
+  return output; // Return new image
 }
 
 // For this function, we want two outputs, a single channel luminance image
