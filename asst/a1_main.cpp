@@ -6,7 +6,7 @@ using namespace std;
 // This is a way for you to test your functions.
 // We will only grade the contents of a1.cpp and Image.cpp
 int main() {
-  cout << "nothing done in a1_main.cpp, debug me !" << endl;
+  // cout << "nothing done in a1_main.cpp, debug me !" << endl;
 
   Image x = create_special();
   x.write("./my_image.png");

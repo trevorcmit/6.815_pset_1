@@ -87,7 +87,8 @@ float &Image::operator()(int x, int y, int z) {
   // Setter to the image data at channel z
   if (x >= 0 && x <= width() && y >= 0 && y <= height() && z >= 0 && z <= channels()) { // x,y,z within bounds
     // Row-major order + accounting for three channels for z value
-    return image_data.at(x + y * width() + z * width() * height());
+    // return image_data.at(x + y * width() + z * width() * height());
+    return image_data[x * stride_[0] + y * stride_[1] + stride_[2] * z];
   }
   else {
     throw OutOfBoundsException();
