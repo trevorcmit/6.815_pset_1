@@ -98,20 +98,18 @@ float &Image::operator()(int x, int y, int z) {
 void Image::set_color(float r, float g, float b) {
   // --------- HANDOUT  PS01 ------------------------------
   // Set the image pixels to the corresponding values
-  for (int h = 0; h < width(); h++) {
-    for (int w = 0; w < height(); w++) {
-      if (dim_values[0] == 1) { // 1 channel = R
-        Image(w, h, 0) = r;
-      }
-      if (dim_values[0] == 2) { // 2 channels = R, G
-        Image(w, h, 0) = r;
-        Image(w, h, 1) = g;
-      }
-      if (dim_values[0] == 3) { // 3 channels = R, G, B
-        Image(w, h, 0) = r;
-        Image(w, h, 1) = g;
-        Image(w, h, 1) = b;
-      }
+  for (int i = 0; i < width() * height(); ++i) {
+    if (channels() == 1) {
+      image_data[i] = r;
+    }
+    if (channels() == 2) {
+      image_data[i] = r;
+      image_data[i + stride_[2]] = g;
+    }
+    if (channels() == 3) {
+      image_data[i] = r;
+      image_data[i + stride_[2]] = g;
+      image_data[i + 2 * stride_[2]] = b;
     }
   }
 }
@@ -120,23 +118,24 @@ void Image::create_rectangle(int xstart, int ystart, int xend, int yend,
                              float r, float g, float b) {
   // --------- HANDOUT  PS01 ------------------------------
   // Set the pixels inside the rectangle to the specified color
-  if (xstart < 0 || ystart < 0 || xend >= width() || yend >= height()) { 
+  if ((xstart < 0 || ystart < 0 || xend >= width() || yend >= height()) ||\
+      (xend < 0 || yend < 0 || xstart >= width() || ystart >= height())) { 
     throw OutOfBoundsException();
   }
   else {
-    for (int h = 0; h < yend; h++) { // Change double loop bounds to yend and xend
-      for (int w = 0; w < xend; w++) {
-        if (dim_values[0] == 1) { // 1 channel = R
-          Image(w, h, 0) = r;
+    for (int h = ystart; h < yend; h++) { // Change double loop bounds to yend and xend
+      for (int w = xstart; w < xend; w++) {
+        if (channels() == 1) { // 1 channel = R
+          (*this)(w, h, 0) = r;
         }
-        if (dim_values[0] == 2) { // 2 channels = R, G
-          Image(w, h, 0) = r;
-          Image(w, h, 1) = g;
+        if (channels() == 2) { // 2 channels = R, G
+          (*this)(w, h, 0) = r;
+          (*this)(w, h, 1) = g;
         }
-        if (dim_values[0] == 3) { // 3 channels = R, G, B
-          Image(w, h, 0) = r;
-          Image(w, h, 1) = g;
-          Image(w, h, 1) = b;
+        if (channels() == 3) { // 3 channels = R, G, B
+          (*this)(w, h, 0) = r;
+          (*this)(w, h, 1) = g;
+          (*this)(w, h, 1) = b;
         }
       }
     }
