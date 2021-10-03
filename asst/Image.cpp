@@ -40,7 +40,7 @@ const float &Image::operator()(int x) const {
 const float &Image::operator()(int x, int y) const {
   // --------- HANDOUT  PS01 ------------------------------
   // Accessor to the image data at channel 0
-  if (x >= 0 && x <= width() && y >= 0 && y <= height()) { // x and y within bounds 
+  if (x >= 0 && x < width() && y >= 0 && y < height()) { // x and y within bounds 
     return image_data.at(x + y * width());                 // Find cell using row-major order
   }
   else {
@@ -51,12 +51,11 @@ const float &Image::operator()(int x, int y) const {
 const float &Image::operator()(int x, int y, int z) const {
   // --------- HANDOUT  PS01 ------------------------------
   // Accessor to the image data at channel z
-  if (x >= 0 && x <= width() && y >= 0 && y <= height() && z >= 0 && z <= channels()) { // x,y,z within bounds
-    // Row-major order + accounting for three channels for z value
-    return image_data.at(x + y * width() + z * width() * height());
+  if ((x < 0 || x >= width()) || (y < 0 || y >= height()) || (z < 0 || z >= channels())) {
+    throw OutOfBoundsException();
   }
   else {
-    throw OutOfBoundsException();
+    return image_data[x * stride_[0] + y * stride_[1] + stride_[2] * z];
   }
 }
 
@@ -74,7 +73,7 @@ float &Image::operator()(int x) {
 float &Image::operator()(int x, int y) {
   // --------- HANDOUT  PS01 ------------------------------
   // Setter to the image data at channel 0
-  if (x >= 0 && x <= width() && y >= 0 && y <= height()) { // x and y within bounds 
+  if (x >= 0 && x < width() && y >= 0 && y < height()) { // x and y within bounds 
     return image_data.at(x + y * width());                 // Find cell using row-major order
   }
   else {
@@ -85,13 +84,11 @@ float &Image::operator()(int x, int y) {
 float &Image::operator()(int x, int y, int z) {
   // --------- HANDOUT  PS01 ------------------------------
   // Setter to the image data at channel z
-  if (x >= 0 && x <= width() && y >= 0 && y <= height() && z >= 0 && z <= channels()) { // x,y,z within bounds
-    // Row-major order + accounting for three channels for z value
-    // return image_data.at(x + y * width() + z * width() * height());
-    return image_data[x * stride_[0] + y * stride_[1] + stride_[2] * z];
+  if ((x < 0 || x >= width()) || (y < 0 || y >= height()) || (z < 0 || z >= channels())) {
+    throw OutOfBoundsException();
   }
   else {
-    throw OutOfBoundsException();
+    return image_data[x * stride_[0] + y * stride_[1] + stride_[2] * z];
   }
 }
 

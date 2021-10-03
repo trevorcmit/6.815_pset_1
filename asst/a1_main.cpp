@@ -8,6 +8,15 @@ using namespace std;
 int main() {
   // cout << "nothing done in a1_main.cpp, debug me !" << endl;
 
+  
+
+  Image im("./Input/castle_small.png");
+  std::vector<Image> LC = lumiChromi(im);
+  cout << "finished lumichromi(im)" << endl;
+  LC[0].write("./Output/LuminanceChrominance+1+lumiChromi.png");
+  LC[1].write("./Output/LuminanceChrominance+2+lumiChromi.png");
+  LC[0].write("./Output/LuminanceChrominance+3+color2gray.png");
+  LC[1].write("./Output/LuminanceChrominance+4+color2gray.png");
 
 
   // Colorspace tests

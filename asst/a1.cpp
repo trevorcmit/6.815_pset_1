@@ -87,7 +87,26 @@ std::vector<Image> lumiChromi(const Image &im) {
   // Create the luminance image
   // Create the chrominance image
   // Create the output vector as (luminance, chrominance)
-  return std::vector<Image>(); // Change this
+  vector<Image> lumiChromiOutput;   // Initialize output vector where the two images will go
+  Image lumi = color2gray(im);      // Get luminance from color2gray function
+  lumiChromiOutput.push_back(lumi); // Added luminance onto output vector
+
+  Image chromi = im;
+  for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      float lumi_value = lumi(h, w); // Get luminance value at this height and width coordinate
+      for (int c = 0; c < im.channels(); c++) {
+        if (lumi_value != 0) {
+          chromi(h, w, c) /= lumi_value; // Compute value if nonzero divisor
+        }
+        else {
+          chromi(h, w, c) = 0; // Solves divide by zero error
+        }
+      }
+    }
+  }
+  lumiChromiOutput.push_back(chromi); // Add chrominance onto output vector
+  return lumiChromiOutput;            // Return output vector with both luminance and chrominance
 }
 
 // Modify brightness then contrast
