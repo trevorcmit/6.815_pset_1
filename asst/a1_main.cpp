@@ -7,12 +7,47 @@ using namespace std;
 // We will only grade the contents of a1.cpp and Image.cpp
 int main() {
   // cout << "nothing done in a1_main.cpp, debug me !" << endl;
+  
+  // {
+  //   // gray gradient
+  //   Image im(256, 32, 3);
+  //   for (int z = 0 ; z < 3 ; ++z) {
+  //     for (int y = 0 ; y < im.height() ; ++y) {
+  //       for (int x = 0 ; x < im.width() ; ++x) {
+  //         im(x, y, z) = (float)x / (im.width() - 1);
+  //       }
+  //     } 
+  //   }
+  //   Image out = quantize(im, 2);
+  //   out.write("./Output/Quantize+1+quantize.png");
+  // }
+  // {
+  //   // green-red gradient
+  //   Image im(256, 32, 3);
+  
+  //   for (int y = 0 ; y < im.height() ; ++y) {
+  //     for (int x = 0 ; x < im.width() ; ++x) {
+  //       im(x, y, 0) = (float)x / (im.width() - 1);
+  //       im(x, y, 1) = 1 - (float)x / (im.width() - 1);
+  //       im(x, y, 2) = 0;
+  //     }
+  //   } 
+  //   Image out = quantize(im, 4);
+  //   out.write("./Output/Quantize+2+quantize.png");
+
+  // }
+  // {
+  //   Image im("./Input/flower.png");
+  //   Image out = quantize(im, 4);
+  //   out.write("./Output/Quantize+3+quantize.png");
+  //   return 0;
+  // }
 
 
-  Image im("./Input/flower.png");
-  Image out = saturate(im, 1.8f);
-  out.write("./Output/Saturation+1+saturate.png");
-  out.write("./Output/Saturation+2+rgb2yuv.png");
+  Image im("./Input/Cambridge1.png");
+  std::vector<Image> out = gamma_test(im, 6, 2.2f);
+  out[0].write("./Output/gammatest_0.png");
+  out[1].write("./Output/gammatest_1.png");
 
   // Image im("./Input/castle_small.png");
   // Image out = rgb2yuv(im);
