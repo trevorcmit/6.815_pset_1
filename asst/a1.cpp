@@ -84,9 +84,6 @@ Image color2gray(const Image &im, const std::vector<float> &weights) {
 // luminance first
 std::vector<Image> lumiChromi(const Image &im) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Create the luminance image
-  // Create the chrominance image
-  // Create the output vector as (luminance, chrominance)
   vector<Image> lumiChromiOutput;   // Initialize output vector where the two images will go
   Image lumi = color2gray(im);      // Get luminance from color2gray function
   lumiChromiOutput.push_back(lumi); // Added luminance onto output vector
@@ -94,13 +91,13 @@ std::vector<Image> lumiChromi(const Image &im) {
   Image chromi = im;
   for (int h = 0; h < im.height(); h++) { // Iterate all possible pixels given height and width
     for (int w = 0; w < im.width(); w++) {
-      float lumi_value = lumi(h, w); // Get luminance value at this height and width coordinate
+      float lumi_value = lumi(w, h); // Get luminance value at this height and width coordinate
       for (int c = 0; c < im.channels(); c++) {
         if (lumi_value != 0) {
-          chromi(h, w, c) /= lumi_value; // Compute value if nonzero divisor
+          chromi(w, h, c) /= lumi_value; // Compute value if nonzero divisor
         }
         else {
-          chromi(h, w, c) = 0; // Solves divide by zero error
+          chromi(w, h, c) = 0; // Solves divide by zero error
         }
       }
     }
@@ -114,29 +111,50 @@ Image brightnessContrastLumi(const Image &im, float brightF, float contrastF,
                              float midpoint) {
   // --------- HANDOUT  PS01 ------------------------------
   // Modify brightness, then contrast of luminance image
-  return Image(1, 1, 1); // Change this
+  auto lc = lumiChromi(im);                                                // Perform lumi/chromi split
+  Image chrom = lc[1];                                                     // Initialize chromi
+  Image pre_lum  = lc[0];                                                  // Initialize lumi
+  Image post_lum = contrast(brightness(im, brightF), contrastF, midpoint); // Perform contrast/brightness operations
+  Image output = chrom * post_lum;                                         // Get output by multiplication
+  return output;                                                           // Return product output
 }
 
 Image rgb2yuv(const Image &im) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Create output image of appropriate size
-  // Change colorspace
-  return Image(1, 1, 1); // Change this
+  Image output(im.width(), im.height(), 3); // Only one color channel
+  for (int h = 0; h < im.height(); h++) {   // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      output(w, h, 0) = 0.299 * im(w, h, 0) + 0.587 * im(w, h, 1) + 0.114 * im(w, h, 2);   // Y
+      output(w, h, 1) = -0.147 * im(w, h, 0) + -0.289 * im(w, h, 1) + 0.436 * im(w, h, 2); // U
+      output(w, h, 2) = 0.615 * im(w, h, 0) + -0.515 * im(w, h, 1) + -0.100 * im(w, h, 2); // V
+    }
+  }
+  return output;
 }
 
 Image yuv2rgb(const Image &im) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Create output image of appropriate size
-  // Change colorspace
-  return Image(1, 1, 1); // Change this
+  Image output(im.width(), im.height(), 3); // Only one color channel
+  for (int h = 0; h < im.height(); h++) {   // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      output(w, h, 0) = 1 * im(w, h, 0) + 1.14 * im(w, h, 2);                          // R
+      output(w, h, 1) = 1 * im(w, h, 0) + -0.395 * im(w, h, 1) + -0.581 * im(w, h, 2); // G
+      output(w, h, 2) = 1 * im(w, h, 0) + 2.032 * im(w, h, 1);                         // B
+    }
+  }
+  return output;
 }
 
 Image saturate(const Image &im, float factor) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Create output image of appropriate size
-  // Saturate image
-  // return output;
-  return Image(1, 1, 1); // Change this
+  Image yuv = rgb2yuv(im);
+  for (int h = 0; h < im.height(); h++) {  // Iterate all possible pixels given height and width
+    for (int w = 0; w < im.width(); w++) {
+      yuv(w, h, 1) *= factor;              // Multiply exiting V value by factor
+      yuv(w, h, 2) *= factor;              // Multiply exiting V value by factor
+    }
+  }
+  return yuv2rgb(yuv);                     // Return RGB colorspace image
 }
 
 // Gamma codes the image
