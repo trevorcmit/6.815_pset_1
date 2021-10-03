@@ -164,7 +164,7 @@ Image gamma_code(const Image &im, float gamma) {
   for (int h = 0; h < im.height(); h++) {
     for (int w = 0; w < im.width(); w++) {
       for (int c = 0; c < im.channels(); c++) {
-        output(w, h, c) = pow(output(w, h, c), 1 / gamma); // Applies gamma formula (y = x ^ (1/gamma))
+        output(w, h, c) = pow(im(w, h, c), 1 / gamma); // Applies gamma formula (y = x ^ (1/gamma))
       }
     }
   }
@@ -202,7 +202,7 @@ std::vector<Image> gamma_test(const Image &im, int bits, float gamma) {
   for (int h = 0; h < im.height(); h++) {
     for (int w = 0; w < im.width(); w++) {
       for (int c = 0; c < im.channels(); c++) {
-        im2_temp(w, h, c) = pow(im2_temp(w, h, c), gamma); // Linearize by power of gamma
+        im2_temp(w, h, c) = pow(im(w, h, c), gamma); // Linearize by power of gamma
       }
     }
   }
@@ -220,15 +220,51 @@ std::vector<Image> spanish(const Image &im) {
   // Push the images onto the vector
   // Do all the required processing
   // Return the vector, color image first
-  return std::vector<Image>(); // Change this
+  vector<Image> spanish_vector;
+  Image first = saturate(im, -1.0f);          // U and V channels multiplied by -1 factor
+  for (int h = 0; h < first.height(); h++) {
+    for (int w = 0; w < first.width(); w++) {
+      first(w, h, 0) = 0.5f;                  // Y channel = 0.5 for all pixels
+    }
+  }
+  Image second = color2gray(im);              // Initiailize grayscale image
+
+  for (int i = 0; i < first.channels(); i++) { // Make black dot on first image
+    first(floor(first.width()/2.0), floor(first.height()/2.0), i) = 0.0f;
+  }
+  for (int i = 0; i < second.channels(); i++) { // Make black dot on second image
+    second(floor(second.width()/2.0), floor(second.height()/2.0), i) = 0.0f;
+  }
+  spanish_vector.push_back(first); // Add both to vector
+  spanish_vector.push_back(second);
+  return spanish_vector;
 }
 
 // White balances an image using the gray world assumption
 Image grayworld(const Image &im) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Implement automatic white balance by multiplying each channel
-  // of the input by a factor such that the three channel of the output
-  // image have the same mean value. The mean value of the green channel
-  // is taken as reference.
-  return Image(1, 1, 1); // Change this
+  vector<float> means_by_channel{0.0f, 0.0f, 0.0f}; // Initialize vector of zeros to hold channel means
+  int dimensions = im.width() * im.height();        // For calculating average ongoing rather than at end
+  for (int h = 0; h < im.height(); h++) {
+    for (int w = 0; w < im.width(); w++) {
+      for (int c = 0; c < im.channels(); c++) {
+        means_by_channel.at(c) += im(h, w, c) / dimensions; // Divide out by dimensions to increment average
+      } 
+    }
+  }
+  
+  float R_factor = means_by_channel.at(1) / means_by_channel.at(0); // Factors based on G channel as reference
+  float G_factor = 1.0f;
+  float B_factor = means_by_channel.at(1) / means_by_channel.at(2);
+  vector<float> channel_factors{R_factor, G_factor, B_factor}; // Vector of multiplying factors
+
+  Image output(im.width(), im.height(), im.channels()); // Initialize output and multiply input by factors
+  for (int h = 0; h < im.width(); h++) {
+    for (int w = 0; w < im.height(); w++) {               
+      for (int c = 0; c < im.channels(); c++) {
+        output(h, w, c) = im(h, w, c) * channel_factors.at(c);        
+      }
+    }
+  }    
+  return output; // Output white-balanced image
 }

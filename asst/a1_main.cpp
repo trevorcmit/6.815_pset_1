@@ -8,6 +8,46 @@ using namespace std;
 int main() {
   // cout << "nothing done in a1_main.cpp, debug me !" << endl;
   
+  {
+      Image im(256, 128, 3);
+      im.set_color(0.3, 0.9, 0.5);
+    
+      Image out = grayworld(im);
+      out.write("./Output/WhiteBalance+1+grayworld.png");
+    }
+    {
+      Image im(256, 128, 3);
+      im.set_color(0.1, 1.0, 1.0);
+      Image out = grayworld(im);
+      out.write("./Output/WhiteBalance+2+grayworld.png");
+    }
+
+  {
+      Image im(256, 128, 3);
+      im.set_color(0.5, 0.5, 0.5);
+      Image out = grayworld(im);
+      out.write("./Output/WhiteBalance+3+grayworld.png");
+    }
+
+
+    {
+      Image im("./Input/flower.png");
+      Image out = grayworld(im);
+      out.write("./Output/WhiteBalance+4+grayworld.png");
+    }
+
+  
+  // Image im("./Input/castle_small.png");
+  // Image im2("./Input/zebra.png");
+
+  // std::vector<Image> sp = spanish(im);
+  // sp[0].write("./Output/Spanish+1+spanish.png");
+  // sp[1].write("./Output/Spanish+2+spanish.png");
+
+  // sp = spanish(im2);
+  // sp[0].write("./Output/Spanish+3+spanish.png");
+  // sp[1].write("./Output/Spanish+4+spanish.png");
+
   // {
   //   // gray gradient
   //   Image im(256, 32, 3);
@@ -43,11 +83,10 @@ int main() {
   //   return 0;
   // }
 
-
-  Image im("./Input/Cambridge1.png");
-  std::vector<Image> out = gamma_test(im, 6, 2.2f);
-  out[0].write("./Output/gammatest_0.png");
-  out[1].write("./Output/gammatest_1.png");
+  // Image im("./Input/Cambridge1.png");
+  // std::vector<Image> out = gamma_test(im, 6, 2.2f);
+  // out[0].write("./Output/gammatest_0.png");
+  // out[1].write("./Output/gammatest_1.png");
 
   // Image im("./Input/castle_small.png");
   // Image out = rgb2yuv(im);
