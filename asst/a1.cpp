@@ -178,13 +178,9 @@ Image quantize(const Image &im, int bits) {
   for (int h = 0; h < im.height(); h++) {
     for (int w = 0; w < im.width(); w++) {
       for (int c = 0; c < im.channels(); c++) {
-        // cout << "Original: " << output(w, h, c) << endl;
         output(w, h, c) = im(w, h, c) * bits;                  // Scale by numer of bits
-        // cout << "Multiplied by bits: " << output(w, h, c) << endl;
         output(w, h, c) = round(output(w, h, c)); // Round to nearest int
-        // cout << "Rounded: " << output(w, h, c) << endl;
         output(w, h, c) = static_cast<float>(output(w, h, c)) / bits;                  // Divide back to range [0, 1]
-        // cout << "Divided: " << output(w, h, c) << endl;
       }
     }
   }
@@ -216,10 +212,6 @@ std::vector<Image> gamma_test(const Image &im, int bits, float gamma) {
 // Return two images in a C++ vector
 std::vector<Image> spanish(const Image &im) {
   // --------- HANDOUT  PS01 ------------------------------
-  // Remember to create the output images and the output vector
-  // Push the images onto the vector
-  // Do all the required processing
-  // Return the vector, color image first
   vector<Image> spanish_vector;
   Image first = saturate(im, -1.0f);          // U and V channels multiplied by -1 factor
   for (int h = 0; h < first.height(); h++) {
@@ -248,7 +240,7 @@ Image grayworld(const Image &im) {
   for (int h = 0; h < im.height(); h++) {
     for (int w = 0; w < im.width(); w++) {
       for (int c = 0; c < im.channels(); c++) {
-        means_by_channel.at(c) += im(h, w, c) / dimensions; // Divide out by dimensions to increment average
+        means_by_channel.at(c) += im(w, h, c) / dimensions; // Divide out by dimensions to increment average
       } 
     }
   }
@@ -259,10 +251,10 @@ Image grayworld(const Image &im) {
   vector<float> channel_factors{R_factor, G_factor, B_factor}; // Vector of multiplying factors
 
   Image output(im.width(), im.height(), im.channels()); // Initialize output and multiply input by factors
-  for (int h = 0; h < im.width(); h++) {
-    for (int w = 0; w < im.height(); w++) {               
+  for (int h = 0; h < im.height(); h++) {
+    for (int w = 0; w < im.width(); w++) {               
       for (int c = 0; c < im.channels(); c++) {
-        output(h, w, c) = im(h, w, c) * channel_factors.at(c);        
+        output(w, h, c) = im(w, h, c) * channel_factors[c]; // Multiply by corresponding channel factor multiple  
       }
     }
   }    
